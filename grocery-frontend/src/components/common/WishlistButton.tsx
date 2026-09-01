@@ -21,7 +21,15 @@ export function WishlistButton({ active, onPress, size = 18 }: Props) {
   };
 
   return (
-    <Pressable accessibilityLabel="Toggle wishlist" onPress={handlePress} style={styles.button} hitSlop={8}>
+    <Pressable
+      accessibilityLabel="Toggle wishlist"
+      onPress={(event) => {
+        event.stopPropagation();
+        handlePress();
+      }}
+      style={styles.button}
+      hitSlop={8}
+    >
       <Animated.View style={{ transform: [{ scale }] }}>
         <Heart
           size={size}

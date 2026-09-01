@@ -118,7 +118,9 @@ export default function ProductDetailScreen() {
           <Text style={styles.name}>{product.name}</Text>
           <View style={styles.metaRow}>
             <Rating value={product.rating} reviews={product.reviews} size={15} />
-            <Text style={styles.stockText}>{product.stock > 0 ? "In Stock" : "Out of Stock"}</Text>
+            <Text style={[styles.stockText, product.stock <= 0 && styles.stockTextOut]}>
+              {product.stock > 0 ? `Available: ${product.stock} ${product.category.toLowerCase().includes("veget") ? (product.unit?.match(/kg|g/i)?.[0] || "kg") : "units"}` : "Out of Stock"}
+            </Text>
           </View>
 
           <View style={{ marginTop: spacing.sm }}>
@@ -177,15 +179,17 @@ export default function ProductDetailScreen() {
         />
         <SecondaryButton
           label="Add to Cart"
+          disabled={product.stock <= 0}
           onPress={() => {
             addToCart(product, quantity);
             showAddedFeedback();
           }}
           style={{ flex: 1 }}
         />
-        <PrimaryButton
-          label="Buy Now"
-          onPress={() => {
+          <PrimaryButton
+            label="Buy Now"
+            disabled={product.stock <= 0}
+            onPress={() => {
             addToCart(product, quantity);
             router.push("/checkout");
           }}
@@ -268,6 +272,7 @@ const styles = StyleSheet.create({
   name: { ...typography.h1, color: colors.text.primary },
   metaRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: spacing.xs },
   stockText: { ...typography.bodySmall, color: colors.status.success },
+  stockTextOut: { color: colors.status.error },
   shortDescription: { ...typography.body, color: colors.text.secondary, marginTop: spacing.md },
   expandable: { borderTopWidth: 1, borderTopColor: colors.border.light, marginTop: spacing.lg, paddingTop: spacing.md },
   expandableHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },

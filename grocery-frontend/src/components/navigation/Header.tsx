@@ -11,45 +11,61 @@ export function Header() {
 
   return (
     <View style={styles.container}>
-      <View style={{ flex: 1 }}>
+      <View style={styles.topRow}>
+        <View style={styles.brandRow}>
+          <View style={styles.brandMark}>
+            <Image source={require("../../../assets/images/bioyield-logo.png")} style={styles.brandLogo} resizeMode="contain" />
+          </View>
+          <View style={styles.brandCopy}>
+            <Text style={styles.brandName}>BioYield</Text>
+            <Text style={styles.brandTagline}>A VENTURE OF JUNGLE VASE</Text>
+          </View>
+        </View>
+        <View style={styles.actions}>
+          <Pressable accessibilityLabel="Notifications" style={styles.iconButton} hitSlop={8}>
+            <Bell size={20} color={colors.text.primary} />
+            <View style={styles.dot} />
+          </Pressable>
+          <Pressable accessibilityLabel="Profile" onPress={() => router.push("/(tabs)/profile")} style={styles.avatar}>
+            {user?.avatar ? <Image source={{ uri: user.avatar }} style={StyleSheet.absoluteFill} /> : <Text style={styles.avatarLetter}>{firstName[0]}</Text>}
+          </Pressable>
+        </View>
+      </View>
+      <View style={styles.greetingBlock}>
         <Text style={styles.greeting}>Good Morning, {firstName} 🌱</Text>
         <View style={styles.locationRow}>
           <MapPin size={13} color={colors.text.secondary} />
-          <Text style={styles.location} numberOfLines={1}>
-            {user?.location || "Discover fresh & organic goodness"}
-          </Text>
+          <Text style={styles.location} numberOfLines={1}>{user?.location || "Discover fresh & organic goodness"}</Text>
         </View>
       </View>
-
-      <Pressable accessibilityLabel="Notifications" style={styles.iconButton} hitSlop={8}>
-        <Bell size={20} color={colors.text.primary} />
-        <View style={styles.dot} />
-      </Pressable>
-
-      <Pressable
-        accessibilityLabel="Profile"
-        onPress={() => router.push("/(tabs)/profile")}
-        style={styles.avatar}
-      >
-        {user?.avatar ? (
-          <Image source={{ uri: user.avatar }} style={StyleSheet.absoluteFill} />
-        ) : (
-          <Text style={styles.avatarLetter}>{firstName[0]}</Text>
-        )}
-      </Pressable>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    alignItems: "center",
+    gap: spacing.sm,
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
     paddingBottom: spacing.md,
-    gap: spacing.sm,
   },
+  topRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  brandRow: { flexDirection: "row", alignItems: "center", flexShrink: 1 },
+  brandCopy: { marginLeft: spacing.sm, flexShrink: 1 },
+  brandName: { ...typography.h2, fontSize: 20, color: colors.primary.forest, letterSpacing: 0.2 },
+  brandTagline: { ...typography.label, fontSize: 8, letterSpacing: 0.8, color: colors.text.secondary, marginTop: 1 },
+  actions: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
+  greetingBlock: { marginTop: 2 },
+  brandMark: {
+    width: 54,
+    height: 54,
+    borderRadius: 16,
+    backgroundColor: colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+  brandLogo: { width: 138, height: 138 },
   greeting: { ...typography.h2, fontSize: 19, color: colors.text.primary },
   locationRow: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 3 },
   location: { ...typography.bodySmall, color: colors.text.secondary, flexShrink: 1 },

@@ -5,16 +5,18 @@ import { colors, radius, spacing, typography } from "@/theme";
 interface Props {
   label: string;
   onPress: () => void;
+  disabled?: boolean;
   style?: StyleProp<ViewStyle>;
 }
 
-export function SecondaryButton({ label, onPress, style }: Props) {
+export function SecondaryButton({ label, onPress, disabled = false, style }: Props) {
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
       onPress={onPress}
-      style={({ pressed }) => [styles.base, { opacity: pressed ? 0.7 : 1 }, style]}
+      disabled={disabled}
+      style={({ pressed }) => [styles.base, { opacity: disabled ? 0.45 : pressed ? 0.7 : 1 }, style]}
     >
       <Text style={styles.label}>{label}</Text>
     </Pressable>

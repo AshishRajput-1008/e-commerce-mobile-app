@@ -72,14 +72,14 @@ export default function HomeScreen() {
   );
 }
 
-function ScrollableCategories({ categories }: { categories: any[] }) {
+function ScrollableCategories({ categories }: { categories?: any[] }) {
   return (
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={{ paddingHorizontal: spacing.lg, gap: spacing.md }}
     >
-      {categories.map((c) => (
+      {(Array.isArray(categories) ? categories : []).map((c) => (
         <CategoryCard key={c.id} category={c} />
       ))}
     </ScrollView>

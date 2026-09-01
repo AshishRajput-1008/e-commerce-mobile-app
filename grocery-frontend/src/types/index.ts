@@ -30,6 +30,7 @@ export interface Product {
   rating: number;
   reviews: number;
   stock: number;
+  stockUnit?: "kg" | "g" | "unit";
   organic: boolean;
   unit?: string;
   specifications?: Record<string, string>;
@@ -48,7 +49,7 @@ export interface Category {
   name: string;
   slug: string;
   icon: string;
-  image: string;
+  image: string | number;
   productCount?: number;
 }
 

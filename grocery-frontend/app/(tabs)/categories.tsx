@@ -41,7 +41,7 @@ export default function CategoriesScreen() {
           contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing["3xl"] }}
           renderItem={({ item }) => (
             <Pressable style={styles.card} onPress={() => router.push(`/category/${item.id}`)}>
-              <Image source={{ uri: item.image }} style={StyleSheet.absoluteFill} resizeMode="cover" />
+              <Image source={{ uri: item.image as string }} style={StyleSheet.absoluteFill} resizeMode="cover" />
               <LinearGradient colors={["transparent", "rgba(23,32,25,0.65)"]} style={StyleSheet.absoluteFill} />
               <Text style={styles.cardIcon}>{item.icon}</Text>
               <Text style={styles.cardTitle}>{item.name}</Text>

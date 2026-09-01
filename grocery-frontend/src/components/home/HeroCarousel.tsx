@@ -7,7 +7,9 @@ import { colors, radius, spacing, typography } from "@/theme";
 import { heroImages } from "@/constants/images";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const SLIDE_WIDTH = SCREEN_WIDTH - spacing.lg * 2;
+// Keep carousel cards aligned with the page content on narrow screens.
+const SLIDE_INSET = spacing["2xl"];
+const SLIDE_WIDTH = SCREEN_WIDTH - SLIDE_INSET * 2;
 
 const slides = [
   {
@@ -52,7 +54,7 @@ export function HeroCarousel() {
         showsHorizontalScrollIndicator={false}
         snapToInterval={SLIDE_WIDTH + spacing.md}
         decelerationRate="fast"
-        contentContainerStyle={{ paddingHorizontal: spacing.lg }}
+        contentContainerStyle={{ paddingHorizontal: SLIDE_INSET }}
         ItemSeparatorComponent={() => <View style={{ width: spacing.md }} />}
         onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
           useNativeDriver: false,
@@ -60,7 +62,7 @@ export function HeroCarousel() {
         })}
         renderItem={({ item }) => (
           <View style={[styles.slide, { width: SLIDE_WIDTH }]}>
-            <Image source={{ uri: item.image }} style={StyleSheet.absoluteFill} resizeMode="cover" />
+            <Image source={typeof item.image === "string" ? { uri: item.image } : item.image} style={[StyleSheet.absoluteFill, styles.heroImage]} resizeMode="contain" />
             <LinearGradient colors={["rgba(23,32,25,0.05)", "rgba(23,32,25,0.75)"]} style={StyleSheet.absoluteFill} />
             <View style={styles.textContainer}>
               <Text style={styles.title}>{item.title}</Text>
@@ -68,7 +70,7 @@ export function HeroCarousel() {
               <PrimaryButton
                 label={item.cta}
                 onPress={() => router.push(item.route as any)}
-                variant="gold"
+                variant="light"
                 style={styles.cta}
               />
             </View>
@@ -92,6 +94,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     backgroundColor: colors.secondary.beige,
   },
+  heroImage: { backgroundColor: colors.secondary.beige },
   textContainer: { padding: spacing.lg },
   title: { ...typography.h1, color: colors.white, fontSize: 26 },
   subtitle: { ...typography.body, color: colors.secondary.cream, marginTop: 4, marginBottom: spacing.md },

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "GreenRoot",
-    "slug": "greenroot",
+    "name": "BioYield",
+    "slug": "BioYieldSynergy",
     "scheme": "greenroot",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -12,7 +12,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#FCFCF8"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.greenroot.app"
@@ -24,9 +26,17 @@
       },
       "package": "com.greenroot.app"
     },
-    "plugins": ["expo-router"],
+    "plugins": [
+      "expo-router"
+    ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "e0d4eb04-0220-445e-a43c-682239017b35"
+      }
     }
   }
 }

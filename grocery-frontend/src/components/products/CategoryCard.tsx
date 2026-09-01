@@ -10,13 +10,14 @@ interface Props {
 }
 
 export function CategoryCard({ category }: Props) {
+  const image = category.image || categoryImages[category.slug as keyof typeof categoryImages] || categoryImages.vegetables;
   return (
     <Pressable
       onPress={() => router.push(`/category/${category.id}`)}
       style={({ pressed }) => [styles.container, { opacity: pressed ? 0.8 : 1 }]}
     >
       <View style={styles.imageWrap}>
-        <Image source={{ uri: category.image || categoryImages[category.slug as keyof typeof categoryImages] || categoryImages.vegetables }} style={StyleSheet.absoluteFill} resizeMode="cover" />
+        <Image source={{ uri: image as string }} style={StyleSheet.absoluteFill} resizeMode="cover" />
         <View style={styles.iconBadge}>
           <Text style={styles.icon}>{category.icon}</Text>
         </View>

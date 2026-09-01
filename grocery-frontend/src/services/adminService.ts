@@ -1,17 +1,25 @@
 import { api } from "./api";
-import { ApiResponse, Order, Product } from "@/types";
+import { ApiResponse, Category, Order, Product } from "@/types";
 
 export interface CreateProductPayload {
   name: string;
   description: string;
-  category: "vegetables" | "plants";
+  category: string;
   price: number;
   mrp: number;
   stock: number;
+  stockUnit?: "kg" | "g" | "unit";
   lowStockThreshold: number;
   unit: string;
   imageUrl?: string;
   images?: string[];
+}
+
+export interface CreateCategoryPayload {
+  name: string;
+  slug?: string;
+  icon?: string;
+  image?: string;
 }
 
 export interface AdminOrder extends Order {
@@ -31,8 +39,18 @@ export const adminService = {
     const res = await api.post<ApiResponse<Product>>("/admin/products", payload);
     return res.data.data;
   },
-  async updateStock(id: string, stock: number, lowStockThreshold: number): Promise<Product> {
-    const res = await api.patch<ApiResponse<{ product: Product }>>(`/admin/products/${id}/stock`, { stock, lowStockThreshold });
+  async createCategory(payload: CreateCategoryPayload): Promise<Category> {
+    const res = await api.post<ApiResponse<Category>>("/admin/categories", payload);
+    return res.data.data;
+  },
+  async deleteCategory(id: string): Promise<void> {
+    await api.delete(`/admin/categories/${id}`);
+  },
+  async deleteProduct(id: string): Promise<void> {
+    await api.delete(`/admin/products/${id}`);
+  },
+  async updateStock(id: string, stock: number, lowStockThreshold: number, stockUnit?: "kg" | "g" | "unit"): Promise<Product> {
+    const res = await api.patch<ApiResponse<{ product: Product }>>(`/admin/products/${id}/stock`, { stock, lowStockThreshold, stockUnit });
     return res.data.data.product;
   },
   async getOrders(): Promise<AdminOrder[]> {

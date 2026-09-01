@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -17,19 +17,21 @@ import { AuthInput, SocialButton, Divider } from "@/components/auth";
 import { PrimaryButton } from "@/components/common";
 import { useAuthStore } from "@/store";
 import { authBackground } from "@/constants/images";
+import { VideoView, useVideoPlayer } from "expo-video";
+const bioYieldLogo = require("../../assets/images/bioyield-logo.png");
 
 export default function LoginScreen() {
   const { login, isLoading, error, clearError } = useAuthStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(true);
+  const [showTransition, setShowTransition] = useState(false);
 
   const handleLogin = async () => {
     clearError();
     try {
       await login({ email, password });
-      const currentUser = useAuthStore.getState().user;
-      router.replace(currentUser?.role === "admin" ? "/admin" : "/(tabs)");
+      setShowTransition(true);
     } catch {
       // error surfaced via store
     }
@@ -43,7 +45,7 @@ export default function LoginScreen() {
             <Image source={{ uri: authBackground }} style={StyleSheet.absoluteFill} resizeMode="cover" />
             <View style={styles.heroOverlay} />
             <View style={styles.logoBadge}>
-              <Text style={styles.logoText}>🌿</Text>
+              <Image source={bioYieldLogo} style={styles.logoImage} resizeMode="contain" />
             </View>
           </View>
 
@@ -98,8 +100,44 @@ export default function LoginScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      {showTransition && <LoginTransitionLoader onFinish={() => { const currentUser = useAuthStore.getState().user; router.replace(currentUser?.role === "admin" ? "/admin" : "/(tabs)"); }} />}
     </SafeAreaView>
   );
+}
+
+function LoginTransitionLoader({ onFinish }: { onFinish: () => void }) {
+  const videoSource = require("../../assets/images/bioyield-start.mp4");
+  const player = useVideoPlayer(videoSource, (instance) => {
+    instance.loop = false;
+    instance.muted = true;
+  });
+
+  useEffect(() => {
+    // WebKit browsers can throw an uncaught native error for imperative
+    // autoplay. BrowserVideo uses muted HTML autoplay attributes instead.
+    if (Platform.OS !== "web") {
+      try {
+        const result = player.play();
+        Promise.resolve(result).catch(() => onFinish());
+      } catch {
+        onFinish();
+      }
+    }
+    const subscription = player.addListener("playToEnd", onFinish);
+    // The transition must never cut off the final frames of the 4–5 second
+    // brand animation on slower iOS devices.
+    const fallback = setTimeout(onFinish, 7500);
+    return () => { subscription.remove(); clearTimeout(fallback); };
+  }, [player, onFinish]);
+
+  return <View style={styles.transitionLoader}>{Platform.OS === "web" ? <BrowserVideo source={videoSource} onFinish={onFinish} /> : <VideoView player={player} style={[StyleSheet.absoluteFill, { objectFit: "contain" } as any]} contentFit="contain" nativeControls={false} />}</View>;
+}
+
+function BrowserVideo({ source, onFinish }: { source: number; onFinish: () => void }) {
+  const resolver = (Image as any).resolveAssetSource;
+  const resolved = typeof resolver === "function" ? resolver(source) : source;
+  const uri = typeof resolved === "string" ? resolved : resolved?.uri;
+  return React.createElement("video", { src: uri, autoPlay: true, muted: true, playsInline: true, onEnded: onFinish, onError: onFinish, style: { position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain" } });
 }
 
 const styles = StyleSheet.create({
@@ -123,6 +161,8 @@ const styles = StyleSheet.create({
     ...{ elevation: 6 },
   },
   logoText: { fontSize: 28 },
+  logoImage: { width: 76, height: 76 },
+  transitionLoader: { ...StyleSheet.absoluteFillObject, zIndex: 20, backgroundColor: "#101813", alignItems: "center", justifyContent: "center", overflow: "hidden" },
   body: { paddingHorizontal: spacing.xl, paddingTop: spacing["3xl"], paddingBottom: spacing["2xl"] },
   title: { ...typography.heroTitle, fontSize: 30, color: colors.text.primary, textAlign: "center" },
   subtitle: { ...typography.body, color: colors.text.secondary, textAlign: "center", marginTop: 6 },

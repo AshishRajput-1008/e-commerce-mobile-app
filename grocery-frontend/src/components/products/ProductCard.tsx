@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Pressable, StyleSheet, Image } from "react-native";
+import { Alert, View, Text, Pressable, StyleSheet, Image } from "react-native";
 import { router } from "expo-router";
 import { Product } from "@/types";
 import { colors, radius, shadow, spacing, typography } from "@/theme";
@@ -15,6 +15,20 @@ export function ProductCard({ product, width = 168 }: Props) {
   const { isWishlisted, toggleWishlist } = useWishlistStore();
   const addToCart = useCartStore((s) => s.addToCart);
 
+  const handleWishlist = () => {
+    const wasWishlisted = isWishlisted(product.id);
+    toggleWishlist(product);
+    Alert.alert(
+      wasWishlisted ? "Removed from wishlist" : "Added to wishlist",
+      wasWishlisted ? `${product.name} was removed from your wishlist.` : `${product.name} is saved to your wishlist.`
+    );
+  };
+
+  const handleAddToCart = () => {
+    addToCart(product, 1);
+    Alert.alert("Added to cart", `${product.name} was added to your cart.`);
+  };
+
   return (
     <Pressable
       onPress={() => router.push(`/product/${product.id}`)}
@@ -28,7 +42,7 @@ export function ProductCard({ product, width = 168 }: Props) {
           </View>
         )}
         <View style={styles.heart}>
-          <WishlistButton active={isWishlisted(product.id)} onPress={() => toggleWishlist(product)} />
+          <WishlistButton active={isWishlisted(product.id)} onPress={handleWishlist} />
         </View>
       </View>
 
@@ -39,10 +53,17 @@ export function ProductCard({ product, width = 168 }: Props) {
         <Text style={styles.unit} numberOfLines={1}>
           {product.unit || product.category}
         </Text>
+        <Text style={[styles.stock, product.stock <= 0 && styles.stockOut]}>
+          {product.stock > 0 ? `Available: ${product.stock} ${product.category.toLowerCase().includes("veget") ? (product.unit?.match(/kg|g/i)?.[0] || "kg") : "units"}` : "Out of stock"}
+        </Text>
         <Rating value={product.rating} reviews={product.reviews} />
         <View style={styles.bottomRow}>
-          <PriceDisplay price={product.price} mrp={product.mrp} size="sm" />
-          <CartButton size={30} onPress={() => addToCart(product, 1)} />
+          <View style={styles.priceWrap}>
+            <PriceDisplay price={product.price} mrp={product.mrp} size="sm" />
+          </View>
+          <View style={styles.cartAction}>
+            <CartButton size={32} onPress={handleAddToCart} disabled={product.stock <= 0} />
+          </View>
         </View>
       </View>
     </Pressable>
@@ -72,5 +93,9 @@ const styles = StyleSheet.create({
   info: { padding: spacing.sm },
   name: { ...typography.productTitle, color: colors.text.primary },
   unit: { ...typography.bodySmall, color: colors.text.muted, marginTop: 2, marginBottom: 6 },
-  bottomRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: spacing.xs },
+  stock: { ...typography.bodySmall, color: colors.status.success, fontFamily: "Inter_600SemiBold", marginBottom: 5 },
+  stockOut: { color: colors.status.error },
+  bottomRow: { width: "100%", flexDirection: "row", alignItems: "center", marginTop: spacing.xs, minHeight: 34 },
+  priceWrap: { flex: 1, minWidth: 0 },
+  cartAction: { flexShrink: 0, marginLeft: spacing.xs, width: 32, height: 32 },
 });

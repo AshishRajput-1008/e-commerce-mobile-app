@@ -29,13 +29,28 @@ export const useProductStore = create<ProductState>((set) => ({
   loadHome: async () => {
     set({ isLoading: true, error: null });
     try {
-      const [featured, nursery, farmingEssentials, categories] = await Promise.all([
+      const loadRequests = () => Promise.all([
         productService.getFeatured(),
         productService.getNursery(),
         productService.getFarmingEssentials(),
         categoryService.getCategories(),
       ]);
-      set({ featured, nursery, farmingEssentials, categories, isLoading: false });
+      let result;
+      try {
+        result = await loadRequests();
+      } catch (firstError) {
+        // Retry once after Render wakes up from an idle period.
+        await new Promise((resolve) => setTimeout(resolve, 1200));
+        result = await loadRequests();
+      }
+      const [featured, nursery, farmingEssentials, categories] = result;
+      set({
+        featured: Array.isArray(featured) ? featured : [],
+        nursery: Array.isArray(nursery) ? nursery : [],
+        farmingEssentials: Array.isArray(farmingEssentials) ? farmingEssentials : [],
+        categories: Array.isArray(categories) ? categories : [],
+        isLoading: false,
+      });
     } catch (e) {
       set({ isLoading: false, error: e instanceof Error ? e.message : "Failed to load" });
     }

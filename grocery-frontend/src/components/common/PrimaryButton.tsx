@@ -8,11 +8,12 @@ interface Props {
   loading?: boolean;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
-  variant?: "primary" | "gold";
+  variant?: "primary" | "gold" | "light";
 }
 
 export function PrimaryButton({ label, onPress, loading, disabled, style, variant = "primary" }: Props) {
-  const bg = variant === "gold" ? colors.accent.gold : colors.primary.forest;
+  const isLight = variant === "light";
+  const bg = isLight ? colors.secondary.cream : variant === "gold" ? colors.accent.gold : colors.primary.forest;
   return (
     <Pressable
       accessibilityRole="button"
@@ -28,7 +29,7 @@ export function PrimaryButton({ label, onPress, loading, disabled, style, varian
       {loading ? (
         <ActivityIndicator color={colors.white} />
       ) : (
-        <Text style={styles.label}>{label}</Text>
+        <Text style={[styles.label, isLight && styles.lightLabel]}>{label}</Text>
       )}
     </Pressable>
   );
@@ -46,4 +47,5 @@ const styles = StyleSheet.create({
     ...typography.button,
     color: colors.white,
   },
+  lightLabel: { color: colors.primary.forest },
 });

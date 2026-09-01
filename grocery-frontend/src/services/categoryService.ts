@@ -12,7 +12,7 @@ export const categoryService = {
       return mockCategories;
     }
     const res = await api.get<ApiResponse<Category[]>>("/categories");
-    return res.data.data;
+    return Array.isArray(res.data?.data) ? res.data.data : [];
   },
 
   async getCategoryById(id: string): Promise<Category | undefined> {
@@ -21,6 +21,6 @@ export const categoryService = {
       return mockCategories.find((c) => c.id === id || c.slug === id);
     }
     const res = await api.get<ApiResponse<Category>>(`/categories/${id}`);
-    return res.data.data;
+    return res.data?.data;
   },
 };

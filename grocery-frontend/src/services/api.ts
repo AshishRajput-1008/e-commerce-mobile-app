@@ -1,5 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Platform } from "react-native";
 
 // ---------------------------------------------------------------------------
 // Central Axios instance.
@@ -17,7 +18,8 @@ export const AUTH_TOKEN_KEY = "@greenroot/auth_token";
 
 export const api = axios.create({
   baseURL: BASE_URL,
-  timeout: 15000,
+  // Render free services can take a few seconds to wake from sleep.
+  timeout: 30000,
   headers: { "Content-Type": "application/json" },
 });
 

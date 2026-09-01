@@ -10,9 +10,11 @@ export default function TabsLayout() {
     >
       <Tabs.Screen name="index" options={{ title: "Home" }} />
       <Tabs.Screen name="categories" options={{ title: "Categories" }} />
-      <Tabs.Screen name="search" options={{ title: "Search" }} />
+      <Tabs.Screen name="cart" options={{ title: "Cart" }} />
       <Tabs.Screen name="wishlist" options={{ title: "Wishlist" }} />
       <Tabs.Screen name="profile" options={{ title: "Profile" }} />
+      {/* Search remains reachable from the home search field, but is not a bottom tab. */}
+      <Tabs.Screen name="search" options={{ href: null }} />
     </Tabs>
   );
 }

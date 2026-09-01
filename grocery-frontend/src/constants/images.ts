@@ -5,8 +5,7 @@
 
 export const heroImages = {
   // Fresh organic vegetables
-  slide1:
-    "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=1200&q=80",
+  slide1: require("../../assets/images/hero-farm-produce.png"),
 
   // Fresh vegetables / farm produce
   slide2:
@@ -23,7 +22,7 @@ export const categoryImages: Record<string, string> = {
  seeds:
   "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=400&q=80",
   plants:
-    "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400&q=80",
+    "https://images.pexels.com/photos/9707061/pexels-photo-9707061.jpeg",
   flowers:
     "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400&q=80",
   fruits:
@@ -33,7 +32,7 @@ export const categoryImages: Record<string, string> = {
   farming:
     "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=400&q=80",
   pots:
-    "https://images.unsplash.com/photo-1459156212016-c812468e2115?w=400&q=80",
+    "https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?auto=format&fit=crop&w=1200&q=80",
 };
 
 export const authBackground =
